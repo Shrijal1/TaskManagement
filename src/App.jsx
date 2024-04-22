@@ -1,16 +1,26 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { ConfigProvider, Layout } from "antd";
 import "./App.css";
-import Login from "./container/Login";
+import RouteConfig from "./routes/routeConfig";
+
+const { Header, Content } = Layout;
 
 function App() {
   return (
-    <>
-      <Login />
-    </>
+    <Layout style={{ minHeight: "100vh" }}>
+      <Header style={{ display: "flex", alignItems: "center" }}>
+        <div className="demo-logo" />
+      </Header>
+      <Content style={{ padding: "48px" }}>
+        <ConfigProvider
+          theme={{
+            token: {},
+          }}
+        >
+          <RouteConfig />
+        </ConfigProvider>
+      </Content>
+    </Layout>
   );
 }
 
 export default App;
-

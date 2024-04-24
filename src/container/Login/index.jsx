@@ -1,74 +1,43 @@
 import { Button, Form, Input } from "antd";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { generateAuthTokens } from "../../utils";
 
 const Login = () => {
-  const formLayout = {
-    wrapperCol: {
-      span: 14,
-    },
-  };
-
   const navigate = useNavigate();
-  const token = sessionStorage.getItem("token");
 
-  console.log("token", token);
-
-  const [searchParams] = useSearchParams();
-
-  const redirect = searchParams.get("redirect")
-    ? searchParams.get("redirect")
-    : "/";
-
-  const [payload, setPayload] = useState({});
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setError("");
-    setPayload({ ...payload, [name]: value });
-  };
-  const handleSubmit = () => {
-    if (payload.userName === "admin" && payload.password === "Test@123") {
-      // generateAuthTokens
+  const handleSubmit = (values) => {
+    if (values.username === "admin" && values.password === "Test@123") {
       const token = generateAuthTokens();
-      sessionStorage.setItem("token", JSON.stringify(token));
+      const currentTime = new Date().getTime();
+
+      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("loggedIn", JSON.stringify(currentTime));
+
       navigate("/");
-    } else {
-      setError("Invalid username or password");
     }
   };
 
   useEffect(() => {
-    if (token) {
+    const storedToken = JSON.parse(localStorage.getItem("token"));
+    if (storedToken) {
       navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="loginWrapper">
       <div className="loginContainer">
         <div className="loginFormWrapper">
           <h2>Login</h2>
-
-          {error && (
-            <div className="loginerror">
-              <span>{error}</span>
-            </div>
-          )}
           <Form
             name="basic"
             style={{
               maxWidth: 600,
             }}
-            initialValues={{
-              remember: true,
-            }}
+            initialValues={{}}
             layout="vertical"
-            // onSubmitCapture={handleSubmit}
             onFinish={handleSubmit}
-            // onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
@@ -81,7 +50,7 @@ const Login = () => {
                 },
               ]}
             >
-              <Input name="userName" onChange={handleChange} />
+              <Input name="userName" />
             </Form.Item>
 
             <Form.Item
@@ -94,7 +63,7 @@ const Login = () => {
                 },
               ]}
             >
-              <Input.Password name="password" onChange={handleChange} />
+              <Input.Password name="password" />
             </Form.Item>
 
             <Form.Item
@@ -115,4 +84,3 @@ const Login = () => {
 };
 
 export default Login;
-

@@ -1,11 +1,19 @@
 import { ConfigProvider, Layout } from "antd";
 import "./App.css";
 import RouteConfig from "./routes/routeConfig";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { sessionTimeOut } from "./utils";
 
 const { Header, Content } = Layout;
 
 function App() {
-  console.log("here");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    sessionTimeOut(navigate);
+  }, [navigate]);
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header style={{ display: "flex", alignItems: "center" }}>
@@ -25,4 +33,3 @@ function App() {
 }
 
 export default App;
-

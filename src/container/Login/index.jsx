@@ -1,5 +1,7 @@
 import { Button, Form, Input } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { generateAuthTokens } from "../../utils";
 
 const Login = () => {
   const formLayout = {
@@ -7,6 +9,17 @@ const Login = () => {
       span: 14,
     },
   };
+
+  const navigate = useNavigate();
+  const token = sessionStorage.getItem("token");
+
+  console.log("token", token);
+
+  const [searchParams] = useSearchParams();
+
+  const redirect = searchParams.get("redirect")
+    ? searchParams.get("redirect")
+    : "/";
 
   const [payload, setPayload] = useState({});
   const [error, setError] = useState("");
@@ -16,16 +29,23 @@ const Login = () => {
     setError("");
     setPayload({ ...payload, [name]: value });
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (payload.userName === "admin" && payload.password === "Test@123") {
-      const token = `user_${new Date().getTime()}`;
+      // generateAuthTokens
+      const token = generateAuthTokens();
       sessionStorage.setItem("token", JSON.stringify(token));
+      navigate("/");
     } else {
       setError("Invalid username or password");
     }
-    // console.log(token);
   };
+
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div className="loginWrapper">
       <div className="loginContainer">
@@ -39,15 +59,15 @@ const Login = () => {
           )}
           <Form
             name="basic"
-            layout={null}
             style={{
               maxWidth: 600,
             }}
             initialValues={{
               remember: true,
             }}
-            onSubmitCapture={handleSubmit}
-            // onFinish={onFinish}
+            layout="vertical"
+            // onSubmitCapture={handleSubmit}
+            onFinish={handleSubmit}
             // onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
